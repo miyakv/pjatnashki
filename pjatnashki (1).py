@@ -1,8 +1,9 @@
-from PyQt5.QtWidgets import QApplication, QAction, QPushButton, QMainWindow, QMenu, QMenuBar
+from PyQt5.QtWidgets import QApplication, QAction, QPushButton, QMainWindow, QMenu, QMenuBar, QLabel, QDialog
 from PyQt5.QtGui import QFont
 from PyQt5.QtCore import QRect
 from random import shuffle
 import sys
+from time import *
 
 
 class Application(QMainWindow):
@@ -72,7 +73,25 @@ class Application(QMainWindow):
         free.setNum(first._num)
         first.setNum(0)
 
-        
+
+class YouWin(QDialog):
+    def __init__(self, time, turns):
+        super().__init__()
+        self.resize(346, 113)
+        self.label = QLabel('You win!\nTurns: {}\nTime: {}'.format(turns, time), self)
+        self.label.setGeometry(QRect(10, 10, 200, 100))
+        font = QFont()
+        font.setPointSize(16)
+        self.label.setFont(font)
+        self.pushButton = QPushButton('Go on', self)
+        self.pushButton.setGeometry(QRect(220, 80, 89, 25))
+
+        self.pushButton.clicked.connect(self.close)
+
+    def close(self):
+        self.accept()
+
+
 
 class Element(QPushButton):
     def __init__(self, num, x, y, slf):
@@ -101,6 +120,7 @@ class Game:
         self.size = size
         self.splitter = lambda lst, sz: [lst[i:i+sz] for i in range(0, len(lst), sz)]
         self.res = []
+        self.turns = 0
         f = self.generate_field()
         for i in range(self.size):
             for j in range(self.size):
@@ -115,6 +135,9 @@ class Game:
                 w.gen_button(i, j, m, self)
                 self.field = self.splitter(self.res, self.size)
 
+        self.finish = 0
+        self.start = time()
+
 
     def check_solvable(self, tr):
         res = 0
@@ -126,7 +149,6 @@ class Game:
             for j in range(i, len(m) - 1):
                 if m[i] > m[j]:
                     res += 1
-#///////////////////////////////////
 
         if res % 2 == 0:
             return True
@@ -177,8 +199,15 @@ class Game:
             return False
         free = self.find_free()
         window.swap(first, free)
+        self.turns += 1
+
         if self.check_gameover():
+            self.finish = time()
             print('YOU WIN')
+            self.win = YouWin(round(self.finish - self.start, 1), self.turns)
+            self.win.show()
+            if self.win.exec_():
+                window.new(self.size)
 
     def check_gameover(self):
         must = 1
