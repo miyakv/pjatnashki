@@ -77,7 +77,10 @@ class Application(QMainWindow):
     def new(self, s):
         for i in range(self.size):
             for j in range(self.size):
-                exec('self.button_{}.deleteLater()\nself.button_{} = None'.format(str(i + 1) + str(j + 1) + str(self.no_game), str(i + 1) + str(j + 1) + str(self.no_game)))
+                exec('self.button_{}.deleteLater()\nself.button_{} = None'.format(
+                    str(i + 1) + str(j + 1) + str(self.no_game),
+                    str(i + 1) + str(j + 1) + str(self.no_game)
+                ))
         self.res = []
         self.no_game += 1
         self.resize(s * 100, s * 100 + 44)
@@ -94,12 +97,12 @@ class Application(QMainWindow):
 
 
 class YouWin(QDialog):
-    def __init__(self, time, turns):
+    def __init__(self, zeit, turns):
         super().__init__()
         self.resize(346, 113)
 
-        min = time // 60
-        sec = time % 60
+        min = zeit // 60
+        sec = zeit % 60
 
         self.label = QLabel('You win!\nTurns: {}\nTime: {}min {}s'.format(turns, int(min), int(sec)), self)
         self.label.setGeometry(QRect(10, 10, 200, 100))
@@ -161,7 +164,6 @@ class Game:
         self.finish = 0
         self.start = time()
 
-
     def check_solvable(self, tr):
         res = 0
         m = []
@@ -198,9 +200,6 @@ class Game:
                 if elem._num == 0:
                     return elem
 
-
-
-
     def movable(self, elem):
         pos_free = []
         for a in self.field:
@@ -213,7 +212,8 @@ class Game:
                 if e._num == elem._num:
                     pos_elem = [a.index(e), self.field.index(a)]
 
-        if ((pos_free[0] - pos_elem[0] in (-1, 1)) and (pos_free[1] - pos_elem[1] == 0)) or ((pos_free[0] - pos_elem[0] == 0) and (pos_free[1] - pos_elem[1] in (-1, 1))):
+        if ((pos_free[0] - pos_elem[0] in (-1, 1)) and (pos_free[1] - pos_elem[1] == 0)) or \
+                ((pos_free[0] - pos_elem[0] == 0) and (pos_free[1] - pos_elem[1] in (-1, 1))):
             return True
         return False
 
@@ -247,10 +247,10 @@ class Game:
 
 def main():
     global window
-    app = QApplication(sys.argv)  # Новый экземпляр QApplication
-    window = Application(2)  # Создаём объект класса ExampleApp
-    window.show()  # Показываем окно
-    app.exec_()  # и запускаем приложение
+    app = QApplication(sys.argv)
+    window = Application(4)
+    window.show()
+    app.exec_()
 
 
 if __name__ == '__main__':
