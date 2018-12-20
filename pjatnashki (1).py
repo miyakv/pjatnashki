@@ -72,6 +72,8 @@ class Application(QMainWindow):
         free.setNum(first._num)
         first.setNum(0)
 
+        
+
 class Element(QPushButton):
     def __init__(self, num, x, y, slf):
         super().__init__(str(num), slf)
@@ -120,6 +122,10 @@ class Game:
         for row in tr:
             m += row
 
+        for i in range(len(m) - 1):
+            for j in range(i, len(m) - 1):
+                if m[i] > m[j]:
+                    res += 1
 #///////////////////////////////////
 
         if res % 2 == 0:
@@ -189,7 +195,7 @@ class Game:
 def main():
     global window
     app = QApplication(sys.argv)  # Новый экземпляр QApplication
-    window = Application(4)  # Создаём объект класса ExampleApp
+    window = Application(2)  # Создаём объект класса ExampleApp
     window.show()  # Показываем окно
     app.exec_()  # и запускаем приложение
 
