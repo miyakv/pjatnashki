@@ -3,7 +3,7 @@ from PyQt5.QtGui import QFont
 from PyQt5.QtCore import QRect
 from random import shuffle
 import sys
-from time import *
+from time import time
 
 
 class Application(QMainWindow):
@@ -12,10 +12,14 @@ class Application(QMainWindow):
         self.size = size
         self.field = None
         self.no_game = 1
-        self.resize(size * 100, size * 100 + 22)
+        self.resize(size * 100, size * 100 + 44)
         self.size = size
+        self.sign = 'Turns: {}'
+        self.Lbl = QLabel(self.sign.format(0), self)
+        self.Lbl.move(10, self.size * 100 + 22)
+        self.Lbl.resize(180, 22)
         self.menubar = QMenuBar(self)
-        self.menubar.setGeometry(QRect(0, 0, 396, 22))
+        self.menubar.setGeometry(QRect(0, 0, 700, 22))
         self.menubar.setObjectName("menubar")
         self.menuSize = QMenu(self.menubar)
         self.menuSize.setObjectName("menuSize")
@@ -43,12 +47,17 @@ class Application(QMainWindow):
         self.action3_3.setText("3*3")
         self.action3_3.triggered.connect(self.new_trig)
         self.action4_4.setText("4*4")
+        self.action4_4.triggered.connect(self.new_trig)
         self.action5_5.setText("5*5")
+        self.action5_5.triggered.connect(self.new_trig)
         self.action6_6.setText("6*6")
+        self.action6_6.triggered.connect(self.new_trig)
         self.action7_7.setText("7*7")
+        self.action7_7.triggered.connect(self.new_trig)
 
         self.jeu = Game(self.size, self)
 
+        self.Lbl.setText('Turns: 0')
 
     def gen_button(self, i, j, m, gm):
         exec('self.button_{} = m\ngm.res.append(m)'.format(str(i + 1) + str(j + 1) + str(self.no_game)))
@@ -56,6 +65,14 @@ class Application(QMainWindow):
     def new_trig(self):
         if self.sender() == self.action3_3:
             self.new(3)
+        elif self.sender() == self.action4_4:
+            self.new(4)
+        elif self.sender() == self.action5_5:
+            self.new(5)
+        elif self.sender() == self.action6_6:
+            self.new(6)
+        elif self.sender() == self.action7_7:
+            self.new(7)
 
     def new(self, s):
         for i in range(self.size):
@@ -63,8 +80,10 @@ class Application(QMainWindow):
                 exec('self.button_{}.deleteLater()\nself.button_{} = None'.format(str(i + 1) + str(j + 1) + str(self.no_game), str(i + 1) + str(j + 1) + str(self.no_game)))
         self.res = []
         self.no_game += 1
-        self.resize(s * 100, s * 100 + 22)
+        self.resize(s * 100, s * 100 + 44)
         self.size = s
+        self.Lbl.move(10, s * 100 + 22)
+        self.Lbl.setText('Turns: 0')
         self.jeu = None
 
         self.jeu = Game(s, self)
@@ -78,7 +97,11 @@ class YouWin(QDialog):
     def __init__(self, time, turns):
         super().__init__()
         self.resize(346, 113)
-        self.label = QLabel('You win!\nTurns: {}\nTime: {}'.format(turns, time), self)
+
+        min = time // 60
+        sec = time % 60
+
+        self.label = QLabel('You win!\nTurns: {}\nTime: {}min {}s'.format(turns, int(min), int(sec)), self)
         self.label.setGeometry(QRect(10, 10, 200, 100))
         font = QFont()
         font.setPointSize(16)
@@ -200,11 +223,12 @@ class Game:
         free = self.find_free()
         window.swap(first, free)
         self.turns += 1
+        window.Lbl.setText(window.sign.format(self.turns))
 
         if self.check_gameover():
             self.finish = time()
             print('YOU WIN')
-            self.win = YouWin(round(self.finish - self.start, 1), self.turns)
+            self.win = YouWin(round(self.finish - self.start, 0), self.turns)
             self.win.show()
             if self.win.exec_():
                 window.new(self.size)
