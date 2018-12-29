@@ -60,7 +60,7 @@ class Application(QMainWindow):
         self.Lbl.setText('Turns: 0')
 
     def gen_button(self, i, j, m, gm):
-        exec('self.button_{} = m\ngm.res.append(m)'.format(str(i + 1) + str(j + 1) + str(self.no_game)))
+        exec('self.button_{} = m\ngm.res.append(m)\nself.button_{}.show()'.format(str(i + 1) + str(j + 1) + str(self.no_game), str(i + 1) + str(j + 1) + str(self.no_game)))
 
     def new_trig(self):
         if self.sender() == self.action3_3:
@@ -248,7 +248,7 @@ class Game:
 def main():
     global window
     app = QApplication(sys.argv)  # Новый экземпляр QApplication
-    window = Application(2)  # Создаём объект класса ExampleApp
+    window = Application(4)  # Создаём объект класса ExampleApp
     window.show()  # Показываем окно
     app.exec_()  # и запускаем приложение
 
